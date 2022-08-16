@@ -1,5 +1,5 @@
-import { Component } from 'react';
 import { ToastContainer } from 'react-toastify';
+import { useState, useEffect } from 'react';
 import Serchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
@@ -10,81 +10,61 @@ import Loader from './Loader/Loader';
 
 import s from './App.module.css';
 
-export default class App extends Component {
-  state = {
-    hits: null,
-    search: '',
-    status: 'resolved',
-    error: null,
-    page: 1,
-    gallery: [],
-    isModalOpen: false,
-    imgUrl: '',
+
+ const App = () => {
+
+  const [search, setSearch] = useState('');
+  const [status, setStatus] = useState('resolved');
+  const [page, setPage] = useState(1);
+  const [gallery, setGallery] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imgUrl, setImgUrl] = useState('');
+
+
+  const loadMore = () => {
+    setPage(prevState =>   prevState + 1 );
   };
 
-  loadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
-  };
-
-  hendleFormSubmit = search => {
-    if(this.state.search === search || !search.length){
+  const hendleFormSubmit = searchTerm => {
+    if(search === searchTerm || !searchTerm.length){
       return 
     }
-
-    this.setState({ search, page: 1, gallery: [] });
+    setSearch(searchTerm);
+    setPage(1);
+    setGallery([]);
   }; 
 
-  closeModal = () => {
-    this.setState({ isModalOpen: false, imgUrl: '' });
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setImgUrl('')
   };
 
-  onImgClick = (url) => {
-    this.setState(() => ({
-      imgUrl: url,
-      isModalOpen: true,
-    }));
+  const onImgClick = (url) => {
+    setImgUrl(url);
+    setIsModalOpen( true );
 
   };
 
-  // componentDidMount() {
-  //   this.setState({ status: 'pending' });
-  //   const query = this.state.search || '';
+  useEffect(() => {
+    if( search === '' && page === 1) return;
+    setStatus('pending')  
+    const query = search || '';
 
-  //   FetchApi(query, this.state.page)
-  //     .then(({ hits }) => {
-  //       this.setState({ gallery: hits, status: 'resolved' });
-  //     })
-  //     .catch(error => this.setState({ error, status: 'rejected' }));
-  // }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.page !== this.state.page ||
-      prevState.search !== this.state.search
-    ) {
-      this.setState({ status: 'pending' });
-      const query = this.state.search || '';
-
-      FetchApi(query, this.state.page)
+    FetchApi(query, page)
         .then(({ hits }) => {
-          this.setState(prevState => ({
-            gallery: [...prevState.gallery, ...hits],
-            status: 'resolved',
-          }));
+          setGallery(prevState => [...prevState, ...hits]);
+          setStatus('resolved')
         })
-        .catch(error => this.setState({ error, status: 'rejected' }));
-    }
-  }
+        .catch(setStatus('rejected'));
 
-  render() {
-    const { status, imgUrl, isModalOpen, gallery, search } = this.state;
+  },[page, search] )
 
     return (
       <div className={s.app}>
-        <Serchbar propSubmit={this.hendleFormSubmit} propSearch={this.state.search}/>
+        <Serchbar propSubmit={hendleFormSubmit} propSearch={search}/>
         <ImageGallery>
           {status !== 'rejected' && gallery.length > 0 && (
-            <ImageGalleryItem propHits={gallery} onImgClick={this.onImgClick} />
+            <ImageGalleryItem propHits={gallery} onImgClick={onImgClick} />
           )}
 
           {status === 'pending' && <Loader />}
@@ -99,15 +79,16 @@ export default class App extends Component {
         )}
 
         {search !== '' && gallery.length !== 0 && gallery.length >= 12 && (
-          <LoadMore more={this.loadMore} />
+          <LoadMore more={loadMore} />
         )}
 
         <ToastContainer autoClose={3000} />
 
         {isModalOpen && (
-          <Modal propModalUrl={imgUrl} propClose={this.closeModal} />
+          <Modal propModalUrl={imgUrl} propClose={closeModal} />
         )}
       </div>
     );
-  }
 }
+
+export default App;

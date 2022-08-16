@@ -1,34 +1,32 @@
-import React, { Component } from "react";
+import { useState} from "react";
 import PropTypes from 'prop-types'
 import { toast } from 'react-toastify'
 import { ReactComponent as Icon } from "../icons/searchIcon.svg";
 import s from './Searchbar.module.css'
 
-class Serchbar extends Component {
-state = {
-    search: '',
-}
+const Serchbar = ({propSubmit}) => {
 
-    nameSearch = event =>{
-        this.setState({search: event.currentTarget.value.toLowerCase()});
+const [search, setSearch] = useState('')
+
+  const nameSearch = event =>{
+    setSearch(event.currentTarget.value.toLowerCase());
     }
-    submitSerch = event => {
+
+  const submitSerch = event => {
         event.preventDefault()
 
-        if(this.state.search.trim() === ''){
+        if(search.trim() === ''){
           toast.info('Enter images!')
           return;
         }
         
-        this.props.propSubmit(this.state.search)
-        this.setState({search: ''})
-       
+        propSubmit(search)
+        setSearch('')
     }
 
-    render() {
         return(
         <header className={s.searchbar}>
-        <form onSubmit={this.submitSerch} className={s.form} >
+        <form onSubmit={submitSerch} className={s.form} >
           <button type="submit" className={s.button}>
             <Icon className={s.button_label}/>
           </button>
@@ -39,16 +37,15 @@ state = {
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
-            value={this.state.search}
-            onChange={this.nameSearch}
+            value={search}
+            onChange={nameSearch}
           />
         </form>
       </header>
-    )}
-}
+    )
+  }
 
 export default Serchbar;
-
 
 Serchbar.propTypes = {
   propSubmit: PropTypes.func.isRequired
