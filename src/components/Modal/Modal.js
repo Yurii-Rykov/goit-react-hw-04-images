@@ -4,18 +4,18 @@ import s from './Modal.module.css';
 
 const Modal = ({propClose, propModalUrl}) => {
  
-  useEffect(() => {
-      window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    }
-  }, [])
+//   useEffect(() => {
+//       window.addEventListener('keydown', handleKeyDown);
+//     return () => {
+//       window.removeEventListener('keydown', handleKeyDown);
+//     }
+//   }, [])
   
- const handleKeyDown = event => {
-    if (event.code === 'Escape') {
-    propClose();
-    }
-  };
+//  const handleKeyDown = event => {
+//     if (event.code === 'Escape') {
+//     propClose();
+//     }
+//   };
 
     return (
       <div onClick={() => propClose()} className={s.overlay}>
