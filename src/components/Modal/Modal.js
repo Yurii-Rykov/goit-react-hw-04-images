@@ -1,21 +1,22 @@
-// import {useEffect} from 'react';
+import {useEffect} from 'react';
 import PropTypes from 'prop-types'
 import s from './Modal.module.css';
 
 const Modal = ({propClose, propModalUrl}) => {
  
-//   useEffect(() => {
-//       window.addEventListener('keydown', handleKeyDown);
-//     return () => {
-//       window.removeEventListener('keydown', handleKeyDown);
-//     }
-//   }, [])
+  useEffect(() => {
+    const handleKeyDown = event => {
+      if (event.code === 'Escape') {
+      propClose();
+      }
+    };
+      window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [propClose])
   
-//  const handleKeyDown = event => {
-//     if (event.code === 'Escape') {
-//     propClose();
-//     }
-//   };
+ 
 
     return (
       <div onClick={() => propClose()} className={s.overlay}>
