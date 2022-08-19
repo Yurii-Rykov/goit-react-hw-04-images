@@ -7,6 +7,7 @@ import LoadMore from './Button/Button';
 import { FetchApi } from '../FetchApi/FetchApi';
 import Modal from './Modal/Modal';
 import Loader from './Loader/Loader';
+import '../index.css'
 
 import s from './App.module.css';
 
@@ -55,7 +56,7 @@ import s from './App.module.css';
           setGallery(prevState => [...prevState, ...hits]);
           setStatus('resolved')
         })
-        .catch(setStatus('rejected'));
+        .catch(() => setStatus('rejected'));
 
   },[page, search] )
 
